@@ -7,16 +7,20 @@ phases:
     commands:
       - echo Installing dependencies...
       - npm install
+
   build:
     commands:
       - echo Building the React app...
-      - npm run build  # Builds the React app and outputs to the 'build/' directory
-      #- mv build/public/index.html build/  # Move index.html to the root of the build folder
+      - npm run build  # Generates the 'build' folder
+
   post_build:
     commands:
-      - echo Build complete.
+      - echo Moving index.html and static files to the root directory
+      - cp -r build/* /tmp/build/  # Copy everything from the 'build' folder to /tmp/build
+      - cp -r build/public/* /tmp/build/  # Move files from build/public (i.e., index.html) to the root
+      - cp -r build/static/* /tmp/build/static/  # Move static assets (JS, CSS) to the root as well
 
 artifacts:
   files:
-    - '**/*'  # Includes all files in the 'build/' directory
-  base-directory: 'build'  # Specify the output directory for the build
+    - '/tmp/build/*'  # Ensure the entire flattened structure is included
+  base-directory: '/tmp/build'  # Point to the temporary folder where everything is copied
